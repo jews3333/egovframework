@@ -58,29 +58,33 @@ public class BoardController {
 	@RequestMapping(value="/form.do")
 	public String form(
 			@ModelAttribute("boardVO") BoardVO boardVO,
-			@RequestParam(value="no", required=false) int no,
+			@RequestParam(value="no", required=false) Integer no,
 			HttpServletRequest request,
 			HttpServletResponse response,
 			ModelMap model
 			) throws Exception {
 		
+		if(no != null) {
+			model.addAttribute("data",boardService.selectBoardOne(no));
+		}
 		
 		return "board/form";
 	}
 	
 	@RequestMapping(value="/action.do")
 	public void action(
-			BoardVO boardVO,
-			@RequestParam(value="no", required=false) int no,
+			@ModelAttribute("boardVO") BoardVO boardVO,
+			@RequestParam(value="no", required=false) Integer no,
 			HttpServletRequest request,
 			HttpServletResponse response
 			) throws Exception {
 		
-		if(no == 0) {
+		if(no != null) {
+			boardVO.setNo(no);
+			boardService.updateBoard(boardVO);
+		} else {
 			boardVO.setUseYn("Y");
 			boardService.insertBoard(boardVO);
-		} else {
-			boardService.updateBoard(boardVO);
 		}
 		
 		response.setContentType("text/html; charset=UTF-8");
