@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="board">
+
+	<resultMap type="testwork.fwd.service.BoardVO" id="BoardMap">
+		<result column="NO" property="no"/>
+		<result column="SJ" property="sj"/>
+		<result column="WRITER" property="writer"/>
+		<result column="SJ" property="sj"/>
+		<result column="CREATE_DATE" property="createDate"/>
+		<result column="USE_YN" property="useYn"/>
+	</resultMap>
+
+	<select id="selectBoardList" parameterType="java.util.HashMap" resultMap="BoardMap">
+		SELECT
+			NO,
+			SJ,
+			WRITER,
+			DATE_FORMAT(CREATE_DATE, '%Y-%m-%d') AS CREATE_DATE, 
+			CN,
+			USE_YN
+		FROM
+			ts_board
+		WHERE
+			USE_YN = 'Y'
+		ORDER BY no DESC
+	</select>
+	
+	<select id="selectBoardOne" parameterType="java.util.HashMap" resultMap="BoardMap">
+		SELECT
+			NO,
+			SJ,
+			WRITER,
+			DATE_FORMAT(CREATE_DATE, '%Y-%m-%d') AS CREATE_DATE, 
+			CN,
+			USE_YN
+		FROM
+			ts_board
+		WHERE
+			NO=#{no}
+	</select>
+
+	<insert id="insertBoard" parameterType="testwork.fwd.service.BoardVO">
+		<selectKey keyProperty="no" resultType="int" order="BEFORE">
+			SELECT
+				NVL(MAX(NO),0) + 1
+			FROM
+				ts_board
+		</selectKey>
+		INSERT INTO ts_board
+		(
+			NO,
+			SJ,
+			WRITER,
+			CREATE_DATE,
+			CN,
+			USE_YN
+		) VALUES (
+			#{no},
+			#{sj},
+			#{writer},
+			now(),
+			#{cn},
+			#{useYn}
+		)
+	</insert>
+	
+	<update id="updateBoard" parameterType="testwork.fwd.service.BoardVO">
+		UPDATE
+			ts_board
+		SET
+			SJ = #{sj},
+			WRITER = #{writer},
+			CN = #{cn}
+		WHERE
+			no = #{no}
+	</update>
+</mapper>
